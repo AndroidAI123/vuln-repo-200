@@ -1,0 +1,1 @@
+Normal text content for data1.txt

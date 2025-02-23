@@ -19,18 +19,17 @@ NUM_COMMITS = 20
 if not os.path.exists(VULN_DIR):
     os.makedirs(VULN_DIR)
 
-def generate_random_file():
-    """ Tạo file ngẫu nhiên dựa trên xác suất """
+def generate_random_files():
+    """Tạo file ngẫu nhiên dựa trên xác suất"""
     prob = random.random()  # Xác suất giữa 0 và 1
-
     files_created = []
 
     if prob < 0.5:
         # 50% tạo các file chứa thông tin nhạy cảm
-        num_files = random.randint(1, 3)  # Tạo 1-3 file
+        num_files = random.randint(1, 3)  # Tạo từ 1 đến 3 file
         for _ in range(num_files):
             file_name = random.choice(SENSITIVE_FILES)
-            file_path = os.path.join(VULN_DIR, f"fake_secret{file_name}")
+            file_path = os.path.join(VULN_DIR, f"fake_secret_{random.randint(1000, 9999)}{file_name}")
             with open(file_path, "w") as f:
                 f.write(f"Fake sensitive data for {file_name}")
             files_created.append(file_path)
@@ -39,7 +38,7 @@ def generate_random_file():
         num_files = random.randint(1, 3)
         for _ in range(num_files):
             file_name = random.choice(TEXT_FILES)
-            file_path = os.path.join(VULN_DIR, file_name)
+            file_path = os.path.join(VULN_DIR, f"{random.randint(1000, 9999)}_{file_name}")
             with open(file_path, "w") as f:
                 f.write(f"Normal text content for {file_name}")
             files_created.append(file_path)
@@ -47,8 +46,8 @@ def generate_random_file():
     return files_created
 
 def git_commit(commit_num):
-    """ Tạo commit với các file được sinh ra """
-    files = generate_random_file()
+    """Tạo commit với các file được sinh ra"""
+    files = generate_random_files()
 
     # Add tất cả các file vào Git
     subprocess.run(["git", "add", "."], check=True)
@@ -57,7 +56,7 @@ def git_commit(commit_num):
     commit_message = f"Auto commit #{commit_num}"
     subprocess.run(["git", "commit", "-m", commit_message], check=True)
 
-    print(f"✅ Commit {commit_num} created with files: {files}")
+    print(f"✅ Commit {commit_num}/20 created with files: {files}")
 
 def main():
     for i in range(1, NUM_COMMITS + 1):
